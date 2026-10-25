@@ -1,0 +1,25 @@
+name: CI
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # 1. Manage environment and toolchains natively
+      - name: Install Rust
+        run: rustup update nightly && rustup default nightly
+
+      # 2. Leverage GitHub's smart caching architecture
+      - name: Cache dependencies
+        uses: Swatinem/rust-cache@v2
+
+      # 3. Install the task runner
+      - name: Install Just
+        uses: taiki-e/install-action@just
+
+      # 4. Offload execution entirely to your justfile
+      - name: Run CI tasks
+        run: just release-static
